@@ -43,13 +43,14 @@ def closest_seat_coord(coord, offset):
 directions = [(-1,-1),(-1,0),(-1,1),(0,-1),(0,1),(1,-1),(1,0),(1,1)]
 neighbours = np.array([[[closest_seat_coord((x, y), d) for d in directions]
                         for y, c in enumerate(r)] for x, r in enumerate(grid)])
+neighbours = np.rollaxis(neighbours + 1, -1)
 padded_seats = np.zeros((grid.shape[0] + 2, grid.shape[1] + 2))
 
 while True:
     prev_seats = np.copy(grid)
     padded_seats[1:-1, 1:-1] = grid
     neighbour_vals = np.take(padded_seats,
-                             np.ravel_multi_index(np.rollaxis(neighbours + 1, -1),
+                             np.ravel_multi_index(neighbours,
                                                   padded_seats.shape)
                              )
     res = np.sum(neighbour_vals == 2, axis=2)
